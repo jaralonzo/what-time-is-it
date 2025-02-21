@@ -1,7 +1,9 @@
 module "bux-hw" {
   source = "github.com/jaralonzo/bux-hw.git"
-  name       = "cloudrun-srv"
-  location   = "europe-west4"
+
+  name     = "cloudrun-srv"
+  location = "europe-west4"
+  project  = "bux-hw"
 
   traffic = {
     percent         = 100
@@ -17,19 +19,29 @@ module "bux-hw" {
   }
 }
 
-data "google_iam_policy" "noauth" {
-  binding {
-    role = "roles/run.invoker"
-    members = [
-      "allUsers",
-    ]
-  }
+# data "google_iam_policy" "this" {
+#   binding {
+#     role = "roles/run.invoker"
+#     members = [
+#       "allUsers",
+#     ]
+#   }
+# }
+
+resource "google_cloud_run_service_iam_binding" "this" {
+  service  = module.bux-hw.name
+  location = module.bux-hw.location
+  project = module.bux-hw.project
+  role     = "roles/run.invoker"
+  members = [
+    "allUsers"
+  ]
 }
 
-resource "google_cloud_run_service_iam_policy" "noauth" {
-  location    = google_cloud_run_service.default.location
-  project     = google_cloud_run_service.default.project
-  service     = google_cloud_run_service.default.name
-
-  policy_data = data.google_iam_policy.noauth.policy_data
-}
+# resource "google_cloud_run_service_iam_policy" "noauth" {
+#   service     = module.bux-hw.name
+#   location    = module.bux-hw.location
+#   project     = module.bux-hw.project
+#   policy_data = google_cloud_run_service_iam_binding.default.policy_data
+#   # policy_data = data.google_iam_policy.noauth.policy_data
+# }
