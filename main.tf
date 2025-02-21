@@ -13,6 +13,9 @@ module "bux-hw" {
       containers = {
         image = "europe-west4-docker.pkg.dev/bux-hw/bux-hw/what-time-is-it:latest"
       }
+      ports = {
+        container_port = 8080
+      }
     }
   }
 }
