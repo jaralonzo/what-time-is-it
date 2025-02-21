@@ -1,0 +1,13 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'europe-west4-docker.pkg.dev/bux-hw/bux-hw/what-time-is-it:latest', '.']
+  
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'europe-west4-docker.pkg.dev/bux-hw/bux-hw/what-time-is-it:latest']
+
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: ['run', 'deploy', 'what-time-is-it-service',
+           '--image', 'europe-west4-docker.pkg.dev/bux-hw/bux-hw/what-time-is-it:latest',
+           '--platform', 'managed',
+           '--region', 'europe-west4',
+           '--allow-unauthenticated']

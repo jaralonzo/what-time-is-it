@@ -7,8 +7,9 @@ import io.ktor.routing.*
 import io.ktor.http.*
 import io.ktor.html.*
 import kotlinx.html.*
-import kotlin.test.*
 import io.ktor.server.testing.*
+import org.junit.Test
+import org.junit.Assert.assertEquals
 
 class ApplicationTest {
     @Test
