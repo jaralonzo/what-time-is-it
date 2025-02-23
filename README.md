@@ -12,5 +12,3 @@ GET /london
 ## Configuration
 
 Default port is 8080, to override set `PORT` environment variable.
-
-# This is a test
