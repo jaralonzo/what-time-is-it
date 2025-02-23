@@ -1,9 +1,10 @@
 module "bux-hw" {
   source = "github.com/jaralonzo/bux-hw.git"
 
-  name     = "cloudrun-srv"
-  location = "europe-west4"
-  project  = "bux-hw"
+  name                       = "what-time-is-it"
+  location                   = "europe-west4"
+  project                    = "bux-hw"
+  autogenerate_revision_name = true
 
   traffic = {
     percent         = 100
@@ -17,31 +18,46 @@ module "bux-hw" {
       }
     }
   }
+
+  # Cloud Armour
+  security_policy_name        = "my-policy"
+  security_policy_description = "basic security policy"
+  security_policy_type        = "CLOUD_ARMOR"
+  rule = [{
+    action   = "allow"
+    priority = "2147483647"
+    match = {
+      versioned_expr = "SRC_IPS_V1"
+      config = {
+        src_ip_ranges = ["*"]
+      }
+    }
+    description = "Deny access to IPs in 9.9.9.0/24"
+    }, {
+    action   = "deny(403)"
+    priority = "1000"
+    match = {
+      versioned_expr = "SRC_IPS_V1"
+      config = {
+        src_ip_ranges = ["9.9.9.0/24"]
+      }
+    }
+    description = "Deny access to IPs in 9.9.9.0/24"
+  }]
 }
 
-# data "google_iam_policy" "this" {
-#   binding {
-#     role = "roles/run.invoker"
-#     members = [
-#       "allUsers",
-#     ]
-#   }
-# }
-
-resource "google_cloud_run_service_iam_binding" "this" {
-  service  = module.bux-hw.name
-  location = module.bux-hw.location
-  project = module.bux-hw.project
-  role     = "roles/run.invoker"
-  members = [
-    "allUsers"
-  ]
+data "google_iam_policy" "this" {
+  binding {
+    role = "roles/run.invoker"
+    members = [
+      "allUsers",
+    ]
+  }
 }
 
-# resource "google_cloud_run_service_iam_policy" "noauth" {
-#   service     = module.bux-hw.name
-#   location    = module.bux-hw.location
-#   project     = module.bux-hw.project
-#   policy_data = google_cloud_run_service_iam_binding.default.policy_data
-#   # policy_data = data.google_iam_policy.noauth.policy_data
-# }
+resource "google_cloud_run_service_iam_policy" "this" {
+  service     = module.bux-hw.name
+  location    = module.bux-hw.location
+  project     = module.bux-hw.project
+  policy_data = data.google_iam_policy.this.policy_data
+}
