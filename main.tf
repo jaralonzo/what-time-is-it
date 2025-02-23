@@ -62,3 +62,4 @@ resource "google_cloud_run_service_iam_policy" "this" {
   project     = module.bux-hw.project
   policy_data = data.google_iam_policy.this.policy_data
 }
+
