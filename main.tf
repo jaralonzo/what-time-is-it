@@ -25,25 +25,15 @@ module "bux-hw" {
   security_policy_type        = "CLOUD_ARMOR"
   rule = [{
     action   = "allow"
-    priority = "2147483647"
-    match = {
-      versioned_expr = "SRC_IPS_V1"
-      config = {
-        src_ip_ranges = ["*"]
-      }
-    }
-    description = "Deny access to IPs in 9.9.9.0/24"
-    }, {
-    action   = "deny(403)"
     priority = "1000"
     match = {
       versioned_expr = "SRC_IPS_V1"
       config = {
-        src_ip_ranges = ["9.9.9.0/24"]
+         src_ip_ranges = ["0.0.0.0/0"]
       }
     }
-    description = "Deny access to IPs in 9.9.9.0/24"
-  }]
+    description = "Allow traffic."
+    }]
 }
 
 data "google_iam_policy" "this" {
